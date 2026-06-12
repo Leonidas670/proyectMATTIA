@@ -1,0 +1,10 @@
+{
+  "assistant_name": "MATT",
+  "assistant_name_spoken": "Matt",
+  "wake_words": ["matt", "oye matt", "hey matt", "despierta"],
+  "legacy_wake_words": ["jarvis", "oye jarvis"],
+  "honorific_default": "señor",
+  "log_prefix": "[MATT]",
+  "executable_name": "MATT",
+  "default_image_folder": "MATT_Generadas"
+}

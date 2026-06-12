@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-path_helper.py — Robust Windows special folder path resolver for JARVIS.
+path_helper.py — Robust Windows special folder path resolver for MATT.
 Handles OneDrive redirection, Spanish localizations, and standard fallbacks.
 """
 import os

@@ -28,7 +28,7 @@ def print_banner():
 
 def main():
     print_banner()
-    print("Este asistente preparará a JARVIS para funcionar de forma óptima.")
+    print("Este asistente preparará a MATT para funcionar de forma óptima.")
     print()
     print(" [1] Comenzar instalación limpia (Recomendado)")
     print(" [2] Salir")
@@ -63,7 +63,7 @@ def main():
             except Exception:
                 pass
                 
-    archivos_basura = ["jarvis.log", "JARVIS_Beta_Installer.exe"]
+    archivos_basura = ["MATT.log", "MATT_Beta_Installer.exe"]
     for f in os.listdir("."):
         if f.endswith(".spec") or f in archivos_basura:
             try:
@@ -97,7 +97,7 @@ def main():
     # FASE 3: Instalación de dependencias
     os.system("cls")
     print_banner()
-    print("\033[36m [FASE 3/5] - Instalando dependencias de JARVIS...\033[0m")
+    print("\033[36m [FASE 3/5] - Instalando dependencias de MATT...\033[0m")
     print()
     print("Esto puede tomar unos minutos dependiendo de tu conexión a Internet.")
     print("Instalando requerimientos de forma segura...")
@@ -158,13 +158,13 @@ def main():
             "timezone": "America/Bogota",
             "language": "es-ES",
             "thinking_sound": True,
-            "jarvis_voice": "Charon",
+            "MATT_voice": "Charon",
             "spotify_client_id": "",
             "spotify_client_secret": "",
             "spotify_redirect_uri": "http://127.0.0.1:8888/callback",
             "tmdb_api_key": "",
             "openrouter_api_key": "",
-            "jarvis_theme": "gold",
+            "MATT_theme": "gold",
             "gpu_acceleration": False
         }
 
@@ -182,17 +182,17 @@ def main():
             pass
 
     # Request credentials from user
-    print("\033[33m[REQUERIDO] Por favor ingresa los datos fundamentales de JARVIS:\033[0m")
+    print("\033[33m[REQUERIDO] Por favor ingresa los datos fundamentales de MATT:\033[0m")
     print()
     
     # 1. Name
-    name_prompt = f" ¿Cómo quieres que te llame JARVIS? [{existing_name}]: " if existing_name else " ¿Cómo quieres que te llame JARVIS?: "
+    name_prompt = f" ¿Cómo quieres que te llame MATT? [{existing_name}]: " if existing_name else " ¿Cómo quieres que te llame MATT?: "
     user_name = input(name_prompt).strip()
     if not user_name and existing_name:
         user_name = existing_name
     while not user_name:
         print("\033[31m[ERROR] El nombre es obligatorio.\033[0m")
-        user_name = input(" ¿Cómo quieres que te llame JARVIS?: ").strip()
+        user_name = input(" ¿Cómo quieres que te llame MATT?: ").strip()
 
     # 2. Gemini API Key
     existing_gemini = current_config.get("gemini_api_key", "")
@@ -252,16 +252,16 @@ def main():
     
     try:
         current_dir = os.getcwd()
-        icon_path = os.path.join(current_dir, "assets", "jarvis_icono.ico")
-        target_vbs = os.path.join(current_dir, "Iniciar JARVIS Beta.vbs")
+        icon_path = os.path.join(current_dir, "assets", "MATT_icono.ico")
+        target_vbs = os.path.join(current_dir, "Iniciar MATT Beta.vbs")
         
         # Crear acceso directo con PowerShell
         ps_cmd = (
-            f"$s=(New-Object -ComObject WScript.Shell).CreateShortcut(([System.Environment]::GetFolderPath('Desktop')+'\\JARVIS AI.lnk'));"
+            f"$s=(New-Object -ComObject WScript.Shell).CreateShortcut(([System.Environment]::GetFolderPath('Desktop')+'\\MATT AI.lnk'));"
             f"$s.TargetPath='{target_vbs}';"
             f"$s.WorkingDirectory='{current_dir}';"
             f"$s.IconLocation='{icon_path}';"
-            f"$s.Description='Lanzador de JARVIS AI (Admin)';"
+            f"$s.Description='Lanzador de MATT AI (Admin)';"
             f"$s.Save()"
         )
         
@@ -271,7 +271,7 @@ def main():
         # El flag está en el byte 21 del archivo .lnk (bit 0x20)
         try:
             desktop = os.path.join(os.path.expanduser("~"), "Desktop")
-            lnk_path = os.path.join(desktop, "JARVIS AI.lnk")
+            lnk_path = os.path.join(desktop, "MATT AI.lnk")
             if os.path.exists(lnk_path):
                 with open(lnk_path, "rb") as f:
                     data = bytearray(f.read())
@@ -281,7 +281,7 @@ def main():
         except Exception:
             pass  # El VBS ya tiene auto-elevación, esto es redundante
         
-        print("\033[32m[OK] Acceso directo 'JARVIS AI' creado en el Escritorio (con permisos de Admin).\033[0m")
+        print("\033[32m[OK] Acceso directo 'MATT AI' creado en el Escritorio (con permisos de Admin).\033[0m")
     except Exception as e:
         print(f"\033[33m[ADVERTENCIA] No se pudo crear el acceso directo de forma automática: {e}\033[0m")
         
@@ -294,11 +294,11 @@ def main():
     print("     ¡INSTALACIÓN Y CONFIGURACIÓN COMPLETADA CON ÉXITO!")
     print("=======================================================================\033[0m")
     print()
-    print("JARVIS está listo para servirte.")
+    print("MATT está listo para servirte.")
     print("Al iniciar el sistema por primera vez se te solicitarán tus API Keys")
     print("para Gemini y OpenRouter automáticamente de forma visual.")
     print()
-    print(" [1] Iniciar JARVIS ahora mismo")
+    print(" [1] Iniciar MATT ahora mismo")
     print(" [2] Salir")
     print()
     
@@ -308,15 +308,15 @@ def main():
         launch_opt = "2"
         
     if launch_opt == "1":
-        print("Iniciando JARVIS...")
+        print("Iniciando MATT...")
         try:
             # Ejecutar el VBS silencioso
-            os.startfile("Iniciar JARVIS Beta.vbs")
+            os.startfile("Iniciar MATT Beta.vbs")
         except Exception:
             # Fallback si no está asociado
-            subprocess.Popen(["wscript.exe", "Iniciar JARVIS Beta.vbs"])
+            subprocess.Popen(["wscript.exe", "Iniciar MATT Beta.vbs"])
             
-    print("\nGracias por usar el instalador de JARVIS AI.")
+    print("\nGracias por usar el instalador de MATT AI.")
     time.sleep(2)
 
 if __name__ == "__main__":

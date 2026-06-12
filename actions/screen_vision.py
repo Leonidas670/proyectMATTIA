@@ -64,8 +64,8 @@ def screen_vision(parameters: dict, player=None) -> str:
     url = "https://openrouter.ai/api/v1/chat/completions"
     headers = {
         "Authorization": f"Bearer {api_key}",
-        "HTTP-Referer": "https://github.com/jarvis-beta",
-        "X-Title": "JARVIS AI Assistant",
+        "HTTP-Referer": "https://github.com/MATT-beta",
+        "X-Title": "MATT AI Assistant",
         "Content-Type": "application/json"
     }
     

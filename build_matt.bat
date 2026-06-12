@@ -1,5 +1,5 @@
 @echo off
-title Compilador JARVIS AI
+title Compilador MATT AI
 
 echo Limpiando build anterior...
 if exist build rmdir /s /q build
@@ -28,11 +28,10 @@ echo COMPILACION EXITOSA
 echo ====================================
 echo.
 
-REM Opcional: probar si el ejecutable arranca sin errores de DLL
 echo Probando el ejecutable (2 segundos)...
-start /b build\exe.win-amd64-3.12\JARVIS.exe
+start /b build\exe.win-amd64-3.12\MATT.exe
 timeout /t 2 /nobreak > nul
-taskkill /f /im JARVIS.exe > nul 2>&1
+taskkill /f /im MATT.exe > nul 2>&1
 
 echo Abriendo carpeta build...
 explorer build

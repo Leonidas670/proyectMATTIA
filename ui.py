@@ -1,4 +1,4 @@
-"""ui.py — 100% Custom Gold-Themed Dynamic Bento PyQt6 User Interface for JARVIS.
+"""ui.py — 100% Custom Gold-Themed Dynamic Bento PyQt6 User Interface for MATT.
 
 Fully optimized HUD layouts:
 - Background WebGL reactive Particle Orb covering the screen.
@@ -85,7 +85,7 @@ def apply_theme_tokens(theme_name: str):
 
 try:
     from memory.config_manager import load_api_keys
-    _theme_name = load_api_keys().get("jarvis_theme", "gold")
+    _theme_name = load_api_keys().get("matt_theme") or load_api_keys().get("jarvis_theme", "gold")
     apply_theme_tokens(_theme_name)
 except Exception:
     apply_theme_tokens("gold")
@@ -402,7 +402,7 @@ class SystemWidget(QWidget):
         
     def optimize_ram_click(self, event):
         self.optimize_ram()
-        QMessageBox.information(self, "RAM Cleaned", "JARVIS physical RAM memory optimized, sir.")
+        QMessageBox.information(self, "RAM Cleaned", "MATT physical RAM memory optimized, sir.")
 
     def optimize_ram(self):
         import gc
@@ -635,7 +635,7 @@ class FilesPanel(QWidget):
 class DeviceSettingsDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("JARVIS Settings Configuration Control")
+        self.setWindowTitle("MATT Settings Configuration Control")
         self.resize(500, 480)
         self.update_style()
         
@@ -797,13 +797,13 @@ class DeviceSettingsDialog(QDialog):
             self.inp_openrouter.setText(cfg.get("openrouter_api_key", ""))
             self.chk_gpu.setChecked(cfg.get("gpu_acceleration", False))
             
-            voice = cfg.get("jarvis_voice", "Aoede")
+            voice = cfg.get("matt_voice") or cfg.get("jarvis_voice", "Aoede")
             for idx in range(self.cmb_voice.count()):
                 if self.cmb_voice.itemData(idx) == voice:
                     self.cmb_voice.setCurrentIndex(idx)
                     break
                     
-            theme = cfg.get("jarvis_theme", "gold")
+            theme = cfg.get("matt_theme") or cfg.get("jarvis_theme", "gold")
             idx = self.cmb_theme.findData(theme)
             if idx >= 0:
                 self.cmb_theme.setCurrentIndex(idx)
@@ -844,8 +844,8 @@ class DeviceSettingsDialog(QDialog):
             cfg = {
                 "gemini_api_key": self.inp_gemini.text().strip(),
                 "openrouter_api_key": self.inp_openrouter.text().strip(),
-                "jarvis_voice": self.cmb_voice.currentData(),
-                "jarvis_theme": theme_val,
+                "matt_voice": self.cmb_voice.currentData(),
+                "matt_theme": theme_val,
                 "llm_model": self.cmb_llm.currentData(),
                 "ai_provider": self.cmb_ai_provider.currentData(),
                 "gpu_acceleration": self.chk_gpu.isChecked(),
@@ -863,7 +863,7 @@ class DeviceSettingsDialog(QDialog):
             if parent:
                 parent.update_theme_styles()
                 
-            QMessageBox.information(self, "Success", "JARVIS Configurations saved, sir.")
+            QMessageBox.information(self, "Success", "MATT Configurations saved, sir.")
             self.accept()
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Failed to save settings: {e}")
@@ -1058,7 +1058,7 @@ class MainWindow(QMainWindow):
         self.central_widget.setObjectName("centralWidget")
         self.setCentralWidget(self.central_widget)
         
-        icon_path = (Path(sys.executable).parent if getattr(sys, 'frozen', False) else Path(__file__).parent) / "assets" / "jarvis_icono.ico"
+        icon_path = (Path(sys.executable).parent if getattr(sys, 'frozen', False) else Path(__file__).parent) / "assets" / "matt_icono.ico"
         if icon_path.exists():
             self.setWindowIcon(QIcon(str(icon_path)))
             
@@ -1220,7 +1220,7 @@ class MainWindow(QMainWindow):
     def _setup_tray_icon(self):
         from PyQt6.QtWidgets import QSystemTrayIcon, QMenu
         self.tray_icon = QSystemTrayIcon(self)
-        icon_path = (Path(sys.executable).parent if getattr(sys, 'frozen', False) else Path(__file__).parent) / "assets" / "jarvis_icono.ico"
+        icon_path = (Path(sys.executable).parent if getattr(sys, 'frozen', False) else Path(__file__).parent) / "assets" / "matt_icono.ico"
         if icon_path.exists():
             self.tray_icon.setIcon(QIcon(str(icon_path)))
         else:
@@ -1229,7 +1229,7 @@ class MainWindow(QMainWindow):
             
         tray_menu = QMenu(self)
         
-        show_action = tray_menu.addAction("Mostrar JARVIS")
+        show_action = tray_menu.addAction("Mostrar MATT")
         show_action.triggered.connect(self.show_and_activate)
         
         mute_action = tray_menu.addAction("Silenciar/Escuchar")
@@ -1276,7 +1276,7 @@ class MainWindow(QMainWindow):
             if hasattr(self, "tray_icon") and self.tray_icon.isVisible():
                 from PyQt6.QtWidgets import QSystemTrayIcon
                 self.tray_icon.showMessage(
-                    "JARVIS AI",
+                    "MATT AI",
                     "Sigo activo en segundo plano. Presiona Insert para hablar o haz doble clic aquí para mostrarme.",
                     QSystemTrayIcon.MessageIcon.Information,
                     3000
@@ -1304,7 +1304,7 @@ class MockRoot:
         QTimer.singleShot(ms, func)
 
 
-class JarvisUI:
+class MattUI:
     def __init__(self, face_path=""):
         self.app = QApplication.instance() or QApplication(sys.argv)
         self.root = MockRoot(self.app)
@@ -1316,7 +1316,7 @@ class JarvisUI:
         self.on_stop_command = None
         self.on_config_saved = None
         
-        self.jarvis_response_buffer = ""
+        self.matt_response_buffer = ""
         
         self._win = MainWindow(self, face_path)
         self._win.show()
@@ -1341,18 +1341,18 @@ class JarvisUI:
     def set_audio_level(self, level: float):
         self._win.orb.set_audio(level)
         
-    def clear_jarvis_response(self):
-        self.jarvis_response_buffer = ""
+    def clear_matt_response(self):
+        self.matt_response_buffer = ""
         self._win.txt_console.setText("")
         
-    def stream_jarvis_chunk(self, chunk: str):
-        text = chunk.replace("JARVIS:", "").strip()
+    def stream_matt_chunk(self, chunk: str):
+        text = chunk.replace("MATT:", "").replace("JARVIS:", "").strip()
         if text:
-            if self.jarvis_response_buffer:
-                self.jarvis_response_buffer += " " + text
+            if self.matt_response_buffer:
+                self.matt_response_buffer += " " + text
             else:
-                self.jarvis_response_buffer = text
-            self._win.txt_console.setText(self.jarvis_response_buffer)
+                self.matt_response_buffer = text
+            self._win.txt_console.setText(self.matt_response_buffer)
 
     def ensure_startup_shortcut(self):
         try:
@@ -1362,7 +1362,7 @@ class JarvisUI:
             if not appdata:
                 return
             startup_dir = os.path.join(appdata, 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Startup')
-            shortcut_path = os.path.join(startup_dir, 'JARVIS AI.lnk')
+            shortcut_path = os.path.join(startup_dir, 'MATT AI.lnk')
             
             current_dir = str(Path(sys.executable).parent if getattr(sys, 'frozen', False) else Path(__file__).parent)
             
@@ -1370,8 +1370,8 @@ class JarvisUI:
                 target_exe = sys.executable
                 icon_path = target_exe
             else:
-                target_exe = os.path.join(current_dir, "Iniciar JARVIS Beta.vbs")
-                icon_path = os.path.join(current_dir, "assets", "jarvis_icono.ico")
+                target_exe = os.path.join(current_dir, "Iniciar MATT Beta.vbs")
+                icon_path = os.path.join(current_dir, "assets", "matt_icono.ico")
                 if not os.path.exists(target_exe):
                     return
             
@@ -1380,7 +1380,7 @@ class JarvisUI:
                 f"$s.TargetPath='{target_exe}';"
                 f"$s.WorkingDirectory='{current_dir}';"
                 f"$s.IconLocation='{icon_path}';"
-                f"$s.Description='Lanzador Automatico de JARVIS AI (Admin)';"
+                f"$s.Description='Lanzador Automatico de MATT AI (Admin)';"
                 f"$s.Save()"
             )
             subprocess.run(["powershell", "-NoProfile", "-Command", ps_cmd], check=True, creationflags=subprocess.CREATE_NO_WINDOW)

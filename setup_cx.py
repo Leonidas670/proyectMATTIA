@@ -38,16 +38,16 @@ build_exe_options = {
 base = "Win32GUI" if sys.platform == "win32" else None
 
 setup(
-    name="JARVIS AI",
+    name="MATT AI",
     version="2.0",
-    description="JARVIS AI Assistant",
+    description="MATT AI Assistant",
     options={"build_exe": build_exe_options},
     executables=[
         Executable(
             "run.py",
             base=base,
-            icon="assets/jarvis_icono.ico",
-            target_name="JARVIS.exe"
+            icon="assets/matt_icono.ico",
+            target_name="MATT.exe"
         )
     ]
 )

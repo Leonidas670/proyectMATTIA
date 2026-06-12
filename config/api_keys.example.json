@@ -9,12 +9,12 @@
     "timezone": "America/Bogota",
     "language": "es-ES",
     "thinking_sound": true,
-    "jarvis_voice": "Charon",
+    "matt_voice": "Charon",
     "spotify_client_id": "",
     "spotify_client_secret": "",
     "spotify_redirect_uri": "http://127.0.0.1:8888/callback",
     "tmdb_api_key": "",
     "openrouter_api_key": "",
-    "jarvis_theme": "gold",
+    "matt_theme": "gold",
     "gpu_acceleration": false
 }

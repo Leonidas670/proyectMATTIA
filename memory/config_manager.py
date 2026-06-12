@@ -30,18 +30,28 @@ def is_configured() -> bool:
     except Exception:
         return False
 
+def migrate_config_keys(cfg: dict) -> dict:
+    """Migrate legacy jarvis_* keys to matt_* without removing legacy keys."""
+    if "matt_voice" not in cfg and "jarvis_voice" in cfg:
+        cfg["matt_voice"] = cfg["jarvis_voice"]
+    if "matt_theme" not in cfg and "jarvis_theme" in cfg:
+        cfg["matt_theme"] = cfg["jarvis_theme"]
+    return cfg
+
+
 def load_api_keys() -> dict[str, str]:
     """Load configuration keys from JSON file."""
     if not CONFIG_FILE.exists():
         return {}
     try:
-        return json.loads(CONFIG_FILE.read_text(encoding="utf-8"))
+        return migrate_config_keys(json.loads(CONFIG_FILE.read_text(encoding="utf-8")))
     except Exception:
         return {}
 
 def save_api_keys(keys: dict[str, str]) -> None:
     """Save configuration keys to JSON file."""
     ensure_config_dir()
+    keys = migrate_config_keys(dict(keys))
     CONFIG_FILE.write_text(json.dumps(keys, indent=2), encoding="utf-8")
 
 def get_gemini_key() -> str:

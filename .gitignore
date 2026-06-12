@@ -16,6 +16,7 @@ custom_tools.json
 
 # Logs
 *.log
+matt.log
 jarvis.log
 
 # Scratch scripts
@@ -30,7 +31,7 @@ Thumbs.db
 # Build artifacts
 build/
 dist/
-build_jarvis/
+build_MATT/
 dist_obfuscated/
 *.spec
 *.xml
