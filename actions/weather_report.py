@@ -5,9 +5,9 @@ import json
 
 def weather_action(parameters: dict, player=None) -> str:
     """Fetch current weather report from wttr.in in clean text format."""
-    city = parameters.get("city", "Lima").strip()
+    city = parameters.get("city", "Bogotá").strip()
     if not city:
-        city = "Lima"
+        city = "Bogotá"  # Default city if input is empty
         
     try:
         # Request text/json format from wttr.in

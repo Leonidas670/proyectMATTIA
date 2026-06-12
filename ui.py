@@ -669,12 +669,16 @@ class DeviceSettingsDialog(QDialog):
         self.cmb_ai_provider = QComboBox()
         self.cmb_ai_provider.addItem("Google Gemini (Default)", "gemini")
         self.cmb_ai_provider.addItem("OpenRouter API", "openrouter")
+        self.cmb_ai_provider.setMaxVisibleItems(8)
+        self.cmb_ai_provider.setMinimumHeight(26)
         lay_api.addWidget(self.cmb_ai_provider)
         
         lay_api.addWidget(QLabel("LLM Engine (Free Version Restricted):"))
         self.cmb_llm = QComboBox()
         self.cmb_llm.addItem("Gemini 1.5 Flash (Basic/Free)", "gemini-1.5-flash")
         self.cmb_llm.addItem("Gemini 2.0 Flash Lite (Optimized)", "gemini-2.0-flash-lite")
+        self.cmb_llm.setMaxVisibleItems(8)
+        self.cmb_llm.setMinimumHeight(26)
         lay_api.addWidget(self.cmb_llm)
         lay_api.addStretch()
         
@@ -685,10 +689,14 @@ class DeviceSettingsDialog(QDialog):
         
         lay_audio.addWidget(QLabel("Microphone Input Device:"))
         self.cmb_mic = QComboBox()
+        self.cmb_mic.setMaxVisibleItems(8)
+        self.cmb_mic.setMinimumHeight(26)
         lay_audio.addWidget(self.cmb_mic)
         
         lay_audio.addWidget(QLabel("Speaker Output Device:"))
         self.cmb_speaker = QComboBox()
+        self.cmb_speaker.setMaxVisibleItems(8)
+        self.cmb_speaker.setMinimumHeight(26)
         lay_audio.addWidget(self.cmb_speaker)
         
         lay_audio.addWidget(QLabel("Active Voice Model:"))
@@ -705,6 +713,8 @@ class DeviceSettingsDialog(QDialog):
         ]
         for val, desc in self.voices:
             self.cmb_voice.addItem(desc, val)
+        self.cmb_voice.setMaxVisibleItems(8)
+        self.cmb_voice.setMinimumHeight(26)
         lay_audio.addWidget(self.cmb_voice)
         
         lay_audio.addWidget(QLabel("Local AI Integration (Vosk Wake Word):"))
@@ -723,6 +733,8 @@ class DeviceSettingsDialog(QDialog):
         self.cmb_theme = QComboBox()
         for k in THEMES.keys():
             self.cmb_theme.addItem(k.upper(), k)
+        self.cmb_theme.setMaxVisibleItems(8)
+        self.cmb_theme.setMinimumHeight(26)
         lay_other.addWidget(self.cmb_theme)
         
         self.chk_gpu = QCheckBox("Enable GPU Rendering Acceleration")
@@ -1003,6 +1015,14 @@ class DeviceSettingsDialog(QDialog):
                 padding: 5px;
                 border-radius: 4px;
             }}
+            QComboBox QAbstractItemView {{
+                background: rgba(0,0,0,0.85);
+                color: {C_TEXT};
+                selection-background-color: {C_PRI};
+                padding: 6px;
+                border: 1px solid {C_BORDER};
+                outline: none;
+            }}
             QCheckBox {{
                 color: {C_PRI};
                 font-weight: bold;
@@ -1066,7 +1086,7 @@ class MainWindow(QMainWindow):
         header_bar = QHBoxLayout(self.header_container)
         header_bar.setContentsMargins(15, 8, 15, 8)
         
-        self.lbl_brand = QLabel("J A R V I S")
+        self.lbl_brand = QLabel("M.A.T.T")
         font = QFont("Century Gothic", 16, QFont.Weight.Bold)
         font.setLetterSpacing(QFont.SpacingType.AbsoluteSpacing, 8.0)
         self.lbl_brand.setFont(font)
@@ -1197,11 +1217,19 @@ class MainWindow(QMainWindow):
         self.clock_w.raise_()
 
     def _open_settings(self):
-        dialog = DeviceSettingsDialog(self)
-        if dialog.exec() == QDialog.DialogCode.Accepted:
-            if self.ui.on_config_saved:
-                from memory.config_manager import load_api_keys
-                self.ui.on_config_saved(load_api_keys())
+        try:
+            dialog = DeviceSettingsDialog(self)
+            res = dialog.exec()
+            if res == QDialog.DialogCode.Accepted:
+                if self.ui.on_config_saved:
+                    from memory.config_manager import load_api_keys
+                    self.ui.on_config_saved(load_api_keys())
+        except Exception as e:
+            try:
+                from PyQt6.QtWidgets import QMessageBox
+                QMessageBox.critical(self, "Error", f"Failed to open Settings: {e}")
+            except Exception:
+                pass
             
     def _open_folder(self):
         try:
