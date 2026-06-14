@@ -769,6 +769,45 @@ class DeviceSettingsDialog(QDialog):
         
         self.btn_spotify_login.clicked.connect(self.connect_spotify)
         lay_other.addStretch()
+
+        # Assistant name and linked accounts section
+        lay_other.addWidget(QLabel("\nAssistant Name:"))
+        self.inp_assistant_name = QLineEdit()
+        self.inp_assistant_name.setPlaceholderText("MATT")
+        lay_other.addWidget(self.inp_assistant_name)
+
+        lay_other.addWidget(QLabel("Linked Accounts:"))
+        # Simple account manager: list + add/remove
+        acc_manage = QVBoxLayout()
+        self.lst_accounts = QListWidget()
+        self.lst_accounts.setMaximumHeight(120)
+        acc_manage.addWidget(self.lst_accounts)
+
+        acc_form = QHBoxLayout()
+        self.inp_acc_service = QLineEdit()
+        self.inp_acc_service.setPlaceholderText("Service (e.g. spotify, google)")
+        self.inp_acc_id = QLineEdit()
+        self.inp_acc_id.setPlaceholderText("Client ID")
+        self.inp_acc_secret = QLineEdit()
+        self.inp_acc_secret.setPlaceholderText("Client Secret")
+        acc_form.addWidget(self.inp_acc_service)
+        acc_form.addWidget(self.inp_acc_id)
+        acc_form.addWidget(self.inp_acc_secret)
+        acc_manage.addLayout(acc_form)
+
+        acc_btns = QHBoxLayout()
+        self.btn_add_account = QPushButton("Add")
+        self.btn_remove_account = QPushButton("Remove Selected")
+        acc_btns.addWidget(self.btn_add_account)
+        acc_btns.addWidget(self.btn_remove_account)
+        acc_manage.addLayout(acc_btns)
+
+        lay_other.addLayout(acc_manage)
+
+        # Internal storage for accounts
+        self._linked_accounts = []
+        self.btn_add_account.clicked.connect(self._add_account)
+        self.btn_remove_account.clicked.connect(self._remove_account)
         
         self.tabs.addTab(tab_api, "APIs & Core")
         self.tabs.addTab(tab_audio, "Audio & Voz")
@@ -844,6 +883,23 @@ class DeviceSettingsDialog(QDialog):
             
             # Check Spotify Auth status
             self.lbl_spotify_status.setText(self.check_spotify_auth_status())
+
+            # Load assistant name and linked accounts
+            self.inp_assistant_name.setText(cfg.get("assistant_name", "MATT"))
+            linked = cfg.get("linked_accounts", [])
+            try:
+                # Expecting list of dicts: {service, client_id, client_secret}
+                self._linked_accounts = list(linked)
+                self.lst_accounts.clear()
+                for acc in self._linked_accounts:
+                    service = acc.get("service", "unknown")
+                    cid = acc.get("client_id", "")
+                    item_text = f"{service} — {cid}"
+                    it = QListWidgetItem(item_text)
+                    it.setData(Qt.ItemDataRole.UserRole, acc)
+                    self.lst_accounts.addItem(it)
+            except Exception:
+                self._linked_accounts = []
             
         except Exception:
             pass
@@ -867,6 +923,9 @@ class DeviceSettingsDialog(QDialog):
                 "spotify_client_secret": self.inp_spotify_secret.text().strip(),
                 "spotify_redirect_uri": self.inp_spotify_uri.text().strip()
             }
+            # Add assistant name and linked accounts
+            cfg["assistant_name"] = self.inp_assistant_name.text().strip() or "MATT"
+            cfg["linked_accounts"] = list(self._linked_accounts)
             save_api_keys(cfg)
             
             apply_theme_tokens(theme_val)
@@ -904,6 +963,31 @@ class DeviceSettingsDialog(QDialog):
                 return "⚠️ Desconectado"
         except Exception as e:
             return f"Error: {e}"
+
+    def _add_account(self):
+        svc = self.inp_acc_service.text().strip()
+        cid = self.inp_acc_id.text().strip()
+        csec = self.inp_acc_secret.text().strip()
+        if not svc:
+            QMessageBox.warning(self, "Accounts", "Please enter a service name.")
+            return
+        acc = {"service": svc, "client_id": cid, "client_secret": csec}
+        self._linked_accounts.append(acc)
+        item_text = f"{svc} — {cid}"
+        it = QListWidgetItem(item_text)
+        it.setData(Qt.ItemDataRole.UserRole, acc)
+        self.lst_accounts.addItem(it)
+        # Clear inputs
+        self.inp_acc_service.clear(); self.inp_acc_id.clear(); self.inp_acc_secret.clear()
+
+    def _remove_account(self):
+        sel = self.lst_accounts.currentRow()
+        if sel >= 0:
+            self.lst_accounts.takeItem(sel)
+            try:
+                del self._linked_accounts[sel]
+            except Exception:
+                pass
 
     def _manual_download_vosk(self):
         self.btn_download_vosk.setEnabled(False)

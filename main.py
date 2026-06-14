@@ -3010,11 +3010,30 @@ class MattLive:
                             _first_chunk = True
 
                     if response.tool_call:
+                        # Log tool calls returned by the model to file for diagnosis
+                        try:
+                            import logging as _logging
+                            _logging.basicConfig(filename='matt_tool_calls.log', level=_logging.DEBUG,
+                                                format='%(asctime)s %(levelname)s:%(message)s')
+                            _logger = _logging.getLogger('matt.toolflow')
+                        except Exception:
+                            _logger = None
+
                         self.ui.clear_matt_response()
                         _first_chunk = True
                         fcs = response.tool_call.function_calls
+                        if _logger:
+                            try:
+                                _logger.debug('Model returned %d function_calls', len(fcs))
+                            except Exception:
+                                pass
                         for fc in fcs:
                             print(f"[MATT] 📞 {fc.name}")
+                            if _logger:
+                                try:
+                                    _logger.debug('function_call: %s args=%s', fc.name, getattr(fc, 'args', None))
+                                except Exception:
+                                    pass
                             _last_tool = fc.name
                         # Execute all tool calls in parallel when there are multiple
                         if len(fcs) > 1:
